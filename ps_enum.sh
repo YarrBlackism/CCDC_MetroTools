@@ -1,1 +1,77 @@
+#!/bin/bash
 
+function checkps {
+  clear
+  P=/root/ps
+  ps --ppid 2 -p 2 -N -o user=,args= | sort -u >$P.now
+  if [ ! -f $P.base ]; then
+    cp $P.now $P.base
+    echo "Baseline saved. Run this again later to see what's new."
+  else
+    comm -13 $P.base $P.now >$P.new
+    if [ -s $P.new ]; then
+      echo -e "NEW since baseline:\n"
+      cat $P.new
+      echo
+      read -n 1 -p "Add these to the baseline as normal? (y/n) " ans
+      [ "$ans" = y ] && sort -u $P.base $P.new -o $P.base
+    else
+      echo "Nothing new since baseline."
+    fi
+  fi
+  echo
+  read -n 1 -p "Press any key to return to menu"
+
+}
+
+
+function checkcron {
+  clear
+  C=/root/cron
+  grep -H '^[^#]' /etc/crontab /etc/cron.d/* /etc/anacrontab /var/spool/cron/crontabs/* 2>/dev/null > $C.now
+  md5sum /etc/cron.*/* /var/spool/cron/*/* 2>/dev/null >> $C.now
+  systemctl list-timers --all --no-legend 2>/dev/null | awk '{print "timer:", $(NF-1), $NF}' >> $C.now
+  sort -u $C.now -o $C.now
+  if [ ! -f $C.base ]; then
+    cp $C.now $C.base
+    echo -e "Baseline saved.\n"
+    cat -v $C.base
+  else
+    comm -13 $C.base $C.now > $C.new
+    if [ -s $C.new ]; then
+      echo -e "NEW since baseline:\n"
+      cat -v $C.new
+      echo
+      read -n 1 -p "Add to baseline (y/n) " ans
+      [ "$ans" = y ] && sort -u $C.base $C.new -o $C.base
+    else
+      echo "Nothing new since baseline."
+    fi
+  fi
+  echo
+  read -n 1 -p "Press any key to return to menu..."
+}
+
+
+function menu {
+  clear
+  echo
+  echo
+  """
+  BLACKISM PS DEFENDING TOOL
+  """
+  echo -e "\t\t\t PS MENU:\n"
+  echo -e "\t1. enum crons."
+  echo -e "\t2. test option."
+  echo -e "\t\t Enter option:"
+  echo -e "\t. press q to quit:"
+  read -n 1 option
+  case $option in
+  1) check
+  2) checkps ;;
+  3) checkcron ;;
+  q) exit ;;
+  esac
+}
+
+while true; do menu; done
