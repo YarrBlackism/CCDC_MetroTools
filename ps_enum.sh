@@ -1,5 +1,23 @@
 #!/bin/bash
 
+
+function usetools {
+  clear
+  echo -e "\t Make sure to use sudo apt update before running"
+  echo -e "\t installing rkhunter/rkhunter...."
+  apt install -y clamav rkhunter
+  echo -e "\t updating rkhunter"
+  rkhunter --update
+
+  echo "running rkhunter scan"
+  rkhunter --check --sk --nocolors
+
+  echo "running clamav scan"
+  clamscan -r --bell -i 2>/dev/null
+  echo
+  read -n 1 -p "Scan complete press any key to return to menu..."
+}
+
 function checkps {
   clear
   P=/root/ps
@@ -72,15 +90,25 @@ read -n 1 -p "Press any key to return to menu..."
 function menu {
   clear
   echo
-  echo
-  """
-  BLACKISM PS DEFENDING TOOL
+    cat << 'EOF'
   
-  """
-  echo -e "\t\t\t PS MENU:\n"
+   ▄▀▄▄▄▄   ▄▀▄▄▄▄   ▄▀▀█▄▄   ▄▀▄▄▄▄  
+  █ █    ▌ █ █    ▌ █ ▄▀   █ █ █    ▌ 
+  ▐ █      ▐ █      ▐ █    █ ▐ █      
+    █        █        █    █   █      
+   ▄▀▄▄▄▄▀  ▄▀▄▄▄▄▀  ▄▀▄▄▄▄▀  ▄▀▄▄▄▄▀ 
+  █     ▐  █     ▐  █     ▐  █     ▐  
+  ▐        ▐        ▐        ▐        
+  
+      Blacksim ccdc toolkit
+EOF
+  
+  echo -e "\t\t\t Toolkit MENU:\n"
   echo -e "\t1. check sockets."
   echo -e "\t2. check ps."
-  echo -e "\t3. check cron."
+  echo -e "\t3. check cron"
+  echo -e "\t4. check locked files"
+  echo -e "\t5. usetools rkhunter/clamAV:"
   echo -e "\t\t Enter option:"
   echo -e "\t. press q to quit:"
   read -n 1 option
@@ -89,6 +117,7 @@ function menu {
   2) checkps ;;
   3) checkcron ;;
   4) checklocked ;;
+  5) usetools ;;
   q) exit ;;
   esac
 }
