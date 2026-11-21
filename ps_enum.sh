@@ -61,6 +61,14 @@ function checksock {
   read -n 1 -p "Press any key to return to menu..."    
 }
 
+function checklocked {
+clear
+echo "check for locked files"
+lsattr -Ra /etc /root /home /var/spool/cron /usr/local /usr/bin /usr/sbin 2>/dev/null | grep -E '^[-a-zA-Z]*[ia][-a-zA-Z]* /'
+echo
+read -n 1 -p "Press any key to return to menu..."
+}
+
 function menu {
   clear
   echo
@@ -80,6 +88,7 @@ function menu {
   1) checksock ;;
   2) checkps ;;
   3) checkcron ;;
+  4) checklocked ;;
   q) exit ;;
   esac
 }
