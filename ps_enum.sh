@@ -52,6 +52,9 @@ function checkcron {
   read -n 1 -p "Press any key to return to menu..."
 }
 
+function checksock {
+  
+}
 
 function menu {
   clear
@@ -59,15 +62,17 @@ function menu {
   echo
   """
   BLACKISM PS DEFENDING TOOL
+  
   """
   echo -e "\t\t\t PS MENU:\n"
-  echo -e "\t1. enum crons."
-  echo -e "\t2. test option."
+  echo -e "\t1. check sockets."
+  echo -e "\t2. check ps."
+  echo -e "\t3. check cron."
   echo -e "\t\t Enter option:"
   echo -e "\t. press q to quit:"
   read -n 1 option
   case $option in
-  1) check
+  1) checksock
   2) checkps ;;
   3) checkcron ;;
   q) exit ;;
@@ -75,3 +80,7 @@ function menu {
 }
 
 while true; do menu; done
+
+
+[ $EUID = 0 ] || { echo "Whats the magic word "; exit 1; }
+export LC_ALL=C
