@@ -53,7 +53,12 @@ function checkcron {
 }
 
 function checksock {
-  
+  clear
+  echo "....packet/raw sockets...."
+  ss -0pa
+  ss -wpa
+  echo
+  read -n 1 -p "Press any key to return to menu..."    
 }
 
 function menu {
@@ -72,7 +77,7 @@ function menu {
   echo -e "\t. press q to quit:"
   read -n 1 option
   case $option in
-  1) checksock
+  1) checksock ;;
   2) checkps ;;
   3) checkcron ;;
   q) exit ;;
